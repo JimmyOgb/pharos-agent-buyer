@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pharos Agent Buyer · x402 Autonomous Purchasing Agent</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo-badge">⚡ 402</div>
+        <div>
+          <h1>Pharos Agent Buyer</h1>
+          <p class="subtitle">Autonomous AI Agent Purchasing with x402 on Pharos Atlantic Testnet</p>
+        </div>
+      </div>
+      <div class="wallet-badge" id="wallet-status">
+        <span class="status-indicator"></span>
+        <span id="wallet-address-display">Atlantic Testnet (688689)</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- Top Stats Row -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Initial Run Budget</span>
+        <span class="stat-value" id="stat-total-budget">$0.010 USDC</span>
+        <span class="stat-sub" id="stat-total-budget-atomic">10,000 atomic units</span>
+      </div>
+      <div class="stat-card highlight">
+        <span class="stat-label">Total Spent</span>
+        <span class="stat-value" id="stat-total-spent">$0.000 USDC</span>
+        <span class="stat-sub" id="stat-total-spent-atomic">0 atomic units</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Remaining Budget</span>
+        <span class="stat-value" id="stat-remaining-budget">$0.010 USDC</span>
+        <span class="stat-sub" id="stat-remaining-budget-atomic">10,000 atomic units</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Active Network</span>
+        <span class="stat-value">Atlantic Testnet</span>
+        <span class="stat-sub">eip155:688689 · USDC</span>
+      </div>
+    </section>
+
+    <!-- Controls & Task Composer Grid -->
+    <div class="dashboard-grid">
+      <!-- Left Column: Task & Budget Controls -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>1. Agent Task & Budget Controls</h2>
+          <span class="badge">EIP-1193 Enforced</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="task-input">Agent Task / Research Objective</label>
+            <textarea id="task-input" rows="3">Research Pharos Atlantic Testnet network throughput, validator distribution, and systemic stability using live paid intelligence resources.</textarea>
+          </div>
+
+          <div class="budget-row">
+            <div class="form-group flex-1">
+              <label for="budget-input">Total Run Budget (USDC)</label>
+              <input type="text" id="budget-input" value="0.010" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="cap-input">Per-Call Cap (USDC)</label>
+              <input type="text" id="cap-input" value="0.006" />
+            </div>
+          </div>
+
+          <!-- Presets -->
+          <div class="presets-container">
+            <label class="preset-label">Quick Arena Demo Presets:</label>
+            <div class="btn-group">
+              <button type="button" class="btn-preset active" id="btn-preset-demo-a">
+                <strong>Demo A: Successful Task</strong>
+                <small>Budget: $0.010 · Cap: $0.006 (Buys both resources)</small>
+              </button>
+              <button type="button" class="btn-preset" id="btn-preset-demo-b">
+                <strong>Demo B: Budget Protection</strong>
+                <small>Budget: $0.003 · Cap: $0.002 (Refuses high price)</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="btn-discover" class="btn btn-secondary">
+              🔍 1. Discover Live Suppliers (402)
+            </button>
+            <button id="btn-run-agent" class="btn btn-primary">
+              ⚡ 2. Execute Autonomous Purchase Run
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Live Supplier Discovery -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>2. Live Discovered Suppliers</h2>
+          <span class="badge live-badge" id="discovery-badge">Uninspected</span>
+        </div>
+        <div class="panel-body">
+          <div id="supplier-list" class="supplier-list">
+            <p class="placeholder-text">Click "Discover Live Suppliers" to probe candidate x402 endpoints and decode live prices directly from HTTP 402 headers.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Live Execution Decisions & Status -->
+    <section class="panel execution-panel" id="execution-section" style="display: none;">
+      <div class="panel-header">
+        <h2>3. Agent Purchase Decision Engine</h2>
+        <span class="badge" id="run-status-badge">Processing</span>
+      </div>
+      <div class="panel-body">
+        <div id="decisions-stream" class="decisions-stream"></div>
+      </div>
+    </section>
+
+    <!-- Final Result Synthesis -->
+    <section class="panel result-panel" id="result-section" style="display: none;">
+      <div class="panel-header">
+        <h2>4. Synthesized Task Result & Verifiable Evidence</h2>
+        <span class="badge success-badge">Complete</span>
+      </div>
+      <div class="panel-body">
+        <div class="result-summary" id="result-summary"></div>
+        <div class="data-breakdown">
+          <div class="data-column">
+            <h3>🌐 Free Telemetry Data</h3>
+            <ul id="free-insights-list" class="insights-list"></ul>
+          </div>
+          <div class="data-column highlight-column">
+            <h3>💎 Paid Intelligence (x402 Unlocked)</h3>
+            <ul id="paid-insights-list" class="insights-list"></ul>
+          </div>
+        </div>
+        <div class="synthesis-box">
+          <h3>🧠 Agent Synthesis & Insight</h3>
+          <p id="result-synthesis-text"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Purchase Ledger -->
+    <section class="panel ledger-panel">
+      <div class="panel-header">
+        <h2>5. Verifiable Purchase Ledger</h2>
+        <span class="badge" id="ledger-count-badge">0 Transactions</span>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Supplier & Resource</th>
+                <th>Advertised Price</th>
+                <th>Decision & State</th>
+                <th>Transaction Hash (Explorer)</th>
+                <th>Running Spend</th>
+                <th>Remaining Budget</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody">
+              <tr>
+                <td colspan="7" class="empty-table-msg">No purchases attempted yet. Execute a task to record transactions.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <p>Pharos Agent Arena · Season of AI · Track: Payments (x402 Agent Buyer)</p>
+      <p>Target Network: <code>eip155:688689</code> (Pharos Atlantic Testnet) · Settlement: Test USDC</p>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
