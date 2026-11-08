@@ -7,28 +7,77 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <!-- Header -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand">
-        <div class="logo-badge">⚡ 402</div>
+        <div class="logo-badge">⚡ x402</div>
         <div>
           <h1>Pharos Agent Buyer</h1>
-          <p class="subtitle">Autonomous AI Agent Purchasing with x402 on Pharos Atlantic Testnet</p>
+          <p class="subtitle">Autonomous AI Agent Micropayments on Pharos Atlantic Testnet</p>
         </div>
       </div>
-      <div class="wallet-badge" id="wallet-status">
-        <span class="status-indicator"></span>
-        <span id="wallet-address-display">Atlantic Testnet (688689)</span>
+      <div class="header-meta">
+        <span class="network-badge">
+          <span class="status-indicator"></span>
+          Pharos Atlantic Testnet (688689)
+        </span>
       </div>
     </div>
   </header>
 
   <main class="app-container">
-    <!-- Top Stats Row -->
+    <!-- SECTION 1: VISIBLE WALLET CONNECTION & NETWORK CONTROLS -->
+    <section class="panel wallet-panel" id="wallet-section">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>1. EIP-1193 Web3 Wallet Authority</h2>
+          <span class="panel-desc">Non-custodial user wallet connection and signing authority</span>
+        </div>
+        <span class="state-badge" id="wallet-state-badge">Checking Wallet...</span>
+      </div>
+      <div class="panel-body">
+        <div class="wallet-content-grid">
+          <div class="wallet-details">
+            <div class="wallet-detail-item">
+              <span class="detail-label">Connection Status</span>
+              <span class="detail-value" id="wallet-status-text">Detecting provider...</span>
+            </div>
+            <div class="wallet-detail-item">
+              <span class="detail-label">Connected Address</span>
+              <span class="detail-value font-mono" id="wallet-address-text">Not Connected</span>
+            </div>
+            <div class="wallet-detail-item">
+              <span class="detail-label">Network Verification</span>
+              <span class="detail-value font-mono" id="wallet-chain-text">Checking chain...</span>
+            </div>
+            <div class="wallet-detail-item">
+              <span class="detail-label">Payment Asset</span>
+              <span class="detail-value font-mono text-cyan" title="0xcfc8330f4bcab529c625d12781b1c19466a9fc8b">
+                Test USDC (0xcfc8...fc8b)
+              </span>
+            </div>
+          </div>
+          <div class="wallet-actions">
+            <button id="btn-connect-wallet" class="btn btn-wallet btn-primary">
+              🦊 Connect MetaMask Wallet
+            </button>
+            <button id="btn-switch-network" class="btn btn-warning" style="display: none;">
+              ⚡ Switch to Atlantic Testnet (688689)
+            </button>
+            <button id="btn-disconnect-wallet" class="btn btn-secondary" style="display: none;">
+              Disconnect
+            </button>
+          </div>
+        </div>
+        <div id="wallet-alert-box" class="alert-box" style="display: none;"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: TOP STATS ROW (STRICT SINGLE-SOURCE FINANCIALS) -->
     <section class="stats-grid">
       <div class="stat-card">
         <span class="stat-label">Initial Run Budget</span>
@@ -36,33 +85,84 @@
         <span class="stat-sub" id="stat-total-budget-atomic">10,000 atomic units</span>
       </div>
       <div class="stat-card highlight">
-        <span class="stat-label">Total Spent</span>
+        <span class="stat-label">Total Verified Spent</span>
         <span class="stat-value" id="stat-total-spent">$0.000 USDC</span>
         <span class="stat-sub" id="stat-total-spent-atomic">0 atomic units</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Remaining Budget</span>
+        <span class="stat-label">Remaining Spend Budget</span>
         <span class="stat-value" id="stat-remaining-budget">$0.010 USDC</span>
         <span class="stat-sub" id="stat-remaining-budget-atomic">10,000 atomic units</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Active Network</span>
-        <span class="stat-value">Atlantic Testnet</span>
-        <span class="stat-sub">eip155:688689 · USDC</span>
+        <span class="stat-label">Financial Integrity</span>
+        <span class="stat-value font-mono" id="stat-integrity">100% In Sync</span>
+        <span class="stat-sub">Authoritative Ledger Derived</span>
       </div>
     </section>
 
-    <!-- Controls & Task Composer Grid -->
+    <!-- SECTION 3: THE TWO PROMINENT ARENA DEMO CONTROLS -->
+    <section class="panel demo-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2>2. Arena Live Demonstration Presets</h2>
+          <span class="panel-desc">Select and execute the two required task scenarios</span>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="demo-cards-grid">
+          <!-- Demo A Card -->
+          <div class="demo-card active" id="card-demo-a">
+            <div class="demo-card-header">
+              <span class="demo-tag demo-tag-a">DEMO A</span>
+              <h3>Successful Task Completion Within Budget</h3>
+            </div>
+            <p class="demo-card-desc">
+              The agent discovers live basic ($0.001) and premium ($0.005) resources, prompts wallet authorization for each, settles on Atlantic Testnet, and compiles a comprehensive intelligence report.
+            </p>
+            <div class="demo-specs">
+              <span><strong>Budget:</strong> $0.010 USDC</span>
+              <span><strong>Cap:</strong> $0.006 USDC</span>
+              <span><strong>Expected:</strong> 2 Paid Purchases ($0.006 total)</span>
+            </div>
+            <button id="btn-select-demo-a" class="btn btn-outline">
+              Select Demo A (Within Budget)
+            </button>
+          </div>
+
+          <!-- Demo B Card -->
+          <div class="demo-card" id="card-demo-b">
+            <div class="demo-card-header">
+              <span class="demo-tag demo-tag-b">DEMO B</span>
+              <h3>Budget Protection & Pre-Authorization Refusal</h3>
+            </div>
+            <p class="demo-card-desc">
+              The agent discovers live premium intelligence ($0.005), evaluates it against a restrictive $0.002 cap, and <strong>refuses payment before wallet authorization</strong>. Zero spend, 100% funds protected.
+            </p>
+            <div class="demo-specs">
+              <span><strong>Budget:</strong> $0.003 USDC</span>
+              <span><strong>Cap:</strong> $0.002 USDC</span>
+              <span><strong>Expected:</strong> 0 Paid Purchases ($0.000 spent)</span>
+            </div>
+            <button id="btn-select-demo-b" class="btn btn-outline">
+              Select Demo B (Budget Stop)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TASK COMPOSER & LIVE DISCOVERY GRID -->
     <div class="dashboard-grid">
-      <!-- Left Column: Task & Budget Controls -->
+      <!-- Task Composer & Execution -->
       <section class="panel">
         <div class="panel-header">
-          <h2>1. Agent Task & Budget Controls</h2>
-          <span class="badge">EIP-1193 Enforced</span>
+          <h2>3. Agent Task & Budget Constraints</h2>
+          <span class="badge" id="mode-badge">Demo A Configured</span>
         </div>
         <div class="panel-body">
           <div class="form-group">
-            <label for="task-input">Agent Task / Research Objective</label>
+            <label for="task-input">Agent Objective / Research Prompt</label>
             <textarea id="task-input" rows="3">Research Pharos Atlantic Testnet network throughput, validator distribution, and systemic stability using live paid intelligence resources.</textarea>
           </div>
 
@@ -72,55 +172,40 @@
               <input type="text" id="budget-input" value="0.010" />
             </div>
             <div class="form-group flex-1">
-              <label for="cap-input">Per-Call Cap (USDC)</label>
+              <label for="cap-input">Per-Call Price Cap (USDC)</label>
               <input type="text" id="cap-input" value="0.006" />
-            </div>
-          </div>
-
-          <!-- Presets -->
-          <div class="presets-container">
-            <label class="preset-label">Quick Arena Demo Presets:</label>
-            <div class="btn-group">
-              <button type="button" class="btn-preset active" id="btn-preset-demo-a">
-                <strong>Demo A: Successful Task</strong>
-                <small>Budget: $0.010 · Cap: $0.006 (Buys both resources)</small>
-              </button>
-              <button type="button" class="btn-preset" id="btn-preset-demo-b">
-                <strong>Demo B: Budget Protection</strong>
-                <small>Budget: $0.003 · Cap: $0.002 (Refuses high price)</small>
-              </button>
             </div>
           </div>
 
           <div class="action-buttons">
             <button id="btn-discover" class="btn btn-secondary">
-              🔍 1. Discover Live Suppliers (402)
+              🔍 Discover Live Suppliers (402)
             </button>
             <button id="btn-run-agent" class="btn btn-primary">
-              ⚡ 2. Execute Autonomous Purchase Run
+              ⚡ Execute Autonomous Agent Run
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Right Column: Live Supplier Discovery -->
+      <!-- Live Supplier Feed -->
       <section class="panel">
         <div class="panel-header">
-          <h2>2. Live Discovered Suppliers</h2>
-          <span class="badge live-badge" id="discovery-badge">Uninspected</span>
+          <h2>4. Live Discovered Suppliers</h2>
+          <span class="badge live-badge" id="discovery-badge">Probing...</span>
         </div>
         <div class="panel-body">
           <div id="supplier-list" class="supplier-list">
-            <p class="placeholder-text">Click "Discover Live Suppliers" to probe candidate x402 endpoints and decode live prices directly from HTTP 402 headers.</p>
+            <p class="placeholder-text">Click "Discover Live Suppliers" to probe candidate x402 endpoints and decode prices directly from live HTTP 402 headers.</p>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- Live Execution Decisions & Status -->
+    <!-- SECTION 5: AGENT DECISION ENGINE & RUN PROGRESS -->
     <section class="panel execution-panel" id="execution-section" style="display: none;">
       <div class="panel-header">
-        <h2>3. Agent Purchase Decision Engine</h2>
+        <h2>5. Agent Purchase Decisions & State Machine</h2>
         <span class="badge" id="run-status-badge">Processing</span>
       </div>
       <div class="panel-body">
@@ -128,11 +213,11 @@
       </div>
     </section>
 
-    <!-- Final Result Synthesis -->
+    <!-- SECTION 6: FINAL SYNTHESIZED RESULT -->
     <section class="panel result-panel" id="result-section" style="display: none;">
       <div class="panel-header">
-        <h2>4. Synthesized Task Result & Verifiable Evidence</h2>
-        <span class="badge success-badge">Complete</span>
+        <h2>6. Synthesized Task Result & Verifiable Evidence</h2>
+        <span class="badge" id="result-badge">Run Complete</span>
       </div>
       <div class="panel-body">
         <div class="result-summary" id="result-summary"></div>
@@ -147,17 +232,23 @@
           </div>
         </div>
         <div class="synthesis-box">
-          <h3>🧠 Agent Synthesis & Insight</h3>
+          <h3>🧠 Agent Synthesis & Analysis</h3>
           <p id="result-synthesis-text"></p>
         </div>
       </div>
     </section>
 
-    <!-- Purchase Ledger -->
+    <!-- SECTION 7: AUTHORITATIVE PURCHASE LEDGER -->
     <section class="panel ledger-panel">
       <div class="panel-header">
-        <h2>5. Verifiable Purchase Ledger</h2>
-        <span class="badge" id="ledger-count-badge">0 Transactions</span>
+        <div class="panel-title-group">
+          <h2>7. Verifiable Purchase Ledger</h2>
+          <span class="panel-desc">Authoritative audit log of all attempted, settled, and rejected purchases</span>
+        </div>
+        <div class="ledger-header-meta">
+          <span class="badge" id="ledger-count-badge">0 Transactions</span>
+          <button id="btn-clear-ledger" class="btn btn-sm btn-secondary" style="display: none;">Reset Run</button>
+        </div>
       </div>
       <div class="panel-body">
         <div class="table-responsive">
@@ -175,7 +266,9 @@
             </thead>
             <tbody id="ledger-tbody">
               <tr>
-                <td colspan="7" class="empty-table-msg">No purchases attempted yet. Execute a task to record transactions.</td>
+                <td colspan="7" class="empty-table-msg">
+                  No purchases attempted yet in this active session. Connect your wallet and execute Demo A or Demo B to record verifiable micropayments.
+                </td>
               </tr>
             </tbody>
           </table>
@@ -184,10 +277,62 @@
     </section>
   </main>
 
+  <!-- EXPLICIT USER WALLET PAYMENT APPROVAL MODAL -->
+  <div id="approvalModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⚡ Explicit Wallet Authorization Required</h3>
+        <span class="modal-tag">EIP-3009 SIGNATURE</span>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">
+          The autonomous agent has evaluated the following resource and requests your explicit wallet signature before proceeding with payment settlement:
+        </p>
+        <div class="modal-details-box">
+          <div class="modal-row">
+            <span class="modal-label">Resource Name:</span>
+            <span class="modal-val" id="modal-resource-name">—</span>
+          </div>
+          <div class="modal-row">
+            <span class="modal-label">Endpoint URL:</span>
+            <span class="modal-val font-mono" id="modal-resource-url">—</span>
+          </div>
+          <div class="modal-row">
+            <span class="modal-label">Advertised Price:</span>
+            <span class="modal-val font-mono text-cyan" id="modal-price-usd">—</span>
+          </div>
+          <div class="modal-row">
+            <span class="modal-label">Atomic Amount:</span>
+            <span class="modal-val font-mono" id="modal-price-atomic">—</span>
+          </div>
+          <div class="modal-row">
+            <span class="modal-label">Payment Recipient:</span>
+            <span class="modal-val font-mono" id="modal-pay-to">—</span>
+          </div>
+          <div class="modal-row">
+            <span class="modal-label">Target Network:</span>
+            <span class="modal-val font-mono" id="modal-network">eip155:688689 (Atlantic)</span>
+          </div>
+        </div>
+        <p class="modal-disclaimer">
+          Your wallet will be prompted to sign an <code>EIP-712 TransferWithAuthorization</code> message. No private keys are ever shared with remote servers.
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button id="modal-btn-reject" class="btn btn-secondary flex-1">
+          ❌ Reject Payment
+        </button>
+        <button id="modal-btn-approve" class="btn btn-primary flex-1">
+          ✍️ Authorize & Sign (MetaMask)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer class="app-footer">
     <div class="footer-inner">
-      <p>Pharos Agent Arena · Season of AI · Track: Payments (x402 Agent Buyer)</p>
-      <p>Target Network: <code>eip155:688689</code> (Pharos Atlantic Testnet) · Settlement: Test USDC</p>
+      <p>Pharos Agent Arena · Payments Track · x402 Agent Buyer</p>
+      <p>Target Network: <code>eip155:688689</code> (Pharos Atlantic Testnet) · Settlement Asset: Test USDC (<code>0xcfc8...fc8b</code>)</p>
     </div>
   </footer>
 
