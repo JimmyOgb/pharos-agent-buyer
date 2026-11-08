@@ -20,7 +20,15 @@ export class PaymentClient {
     signingKey?: string
   ): Promise<SettlementReceipt> {
     if (!endpoint.requirements) {
-      throw new Error(`Endpoint ${endpoint.url} has no parsed payment requirements.`);
+      return {
+        success: false,
+        txHash: "",
+        explorerUrl: "",
+        settledAmountAtomic: "0",
+        payer: "",
+        data: null,
+        error: `Endpoint ${endpoint.url} has no parsed payment requirements.`,
+      };
     }
 
     const reqs = endpoint.requirements;

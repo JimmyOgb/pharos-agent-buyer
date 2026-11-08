@@ -3,9 +3,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Pharos Network](https://img.shields.io/badge/Network-Pharos%20Atlantic%20Testnet%20(688689)-06b6d4)](https://atlantic.pharosscan.xyz)
 [![Payment Standard](https://img.shields.io/badge/Standard-x402%20Protocol%20v2-8b5cf6)](https://docs.pharos.xyz/developer-guide/x402)
-[![Arena Track](https://img.shields.io/badge/Arena%20Track-Payments%20(Hard%20200%2B50)-10b981)](https://pharos-agent-arena.vercel.app/tasks/x402-agent-buyer)
+[![Arena Track](https://img.shields.io/badge/Arena%20Track-Payments%20(Hard)-10b981)](https://pharos-agent-arena.vercel.app/tasks/x402-agent-buyer)
 
-**Pharos Agent Buyer** is an autonomous purchasing agent for the **Pharos Agent Arena** task [x402 Agent Buyer](https://pharos-agent-arena.vercel.app/tasks/x402-agent-buyer) (200 base points + 50 video bonus).
+**Pharos Agent Buyer** is an autonomous purchasing agent for the **Pharos Agent Arena** task [x402 Agent Buyer](https://pharos-agent-arena.vercel.app/tasks/x402-agent-buyer).
 
 Given an objective, the agent discovers live x402-paywalled APIs, parses their actual payment requirements directly from HTTP 402 headers, evaluates information utility vs advertised price, enforces strict user-defined budget and per-call caps, executes non-custodial EIP-3009 payments on **Pharos Atlantic Testnet**, and maintains an immutable purchase ledger with verifiable transaction hashes on the Atlantic block explorer.
 

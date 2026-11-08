@@ -7,12 +7,13 @@ export class SupplierDiscovery {
     url: string,
     supplierName?: string,
     description?: string,
-    category?: string
+    category?: string,
+    retryCount = 1
   ): Promise<DiscoveredEndpoint> {
     const timestamp = new Date().toISOString();
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
 
       const response = await fetch(url, {
         method: "GET",
@@ -153,6 +154,10 @@ export class SupplierDiscovery {
         error: `Unexpected HTTP status: ${status}`,
       };
     } catch (err: any) {
+      if (retryCount > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        return this.probeEndpoint(url, supplierName, description, category, retryCount - 1);
+      }
       return {
         url,
         supplierName: supplierName || "Unreachable Endpoint",
