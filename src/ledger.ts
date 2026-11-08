@@ -28,6 +28,10 @@ export class PurchaseLedger {
     return crypto.createHash("sha256").update(raw).digest("hex");
   }
 
+  public getTotalBudgetAtomic(): bigint {
+    return this.totalBudgetAtomic;
+  }
+
   public getRemainingBudgetAtomic(): bigint {
     return this.remainingBudgetAtomic;
   }
@@ -38,6 +42,14 @@ export class PurchaseLedger {
 
   public getReservedBudgetAtomic(): bigint {
     return this.reservedBudgetAtomic;
+  }
+
+  /**
+   * Enforces the mathematical budget invariant:
+   * Initial Budget = Settled Spend + Reserved Amount + Remaining Budget
+   */
+  public verifyInvariant(): boolean {
+    return this.totalBudgetAtomic === (this.totalSpentAtomic + this.reservedBudgetAtomic + this.remainingBudgetAtomic);
   }
 
   public findByIdempotencyKey(key: string): LedgerEntry | undefined {
@@ -65,6 +77,10 @@ export class PurchaseLedger {
     this.remainingBudgetAtomic += toRelease;
   }
 
+  /**
+   * Only genuine confirmed settlements increase totalSpentAtomic.
+   * Signature-only or unverified receipts MUST release the reservation rather than settle.
+   */
   public confirmSettlement(amountAtomic: bigint): void {
     const toSettle = amountAtomic > this.reservedBudgetAtomic ? this.reservedBudgetAtomic : amountAtomic;
     this.reservedBudgetAtomic -= toSettle;

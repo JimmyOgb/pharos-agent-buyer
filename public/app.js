@@ -69,15 +69,23 @@ document.addEventListener("DOMContentLoaded", () => {
       this.reservedAtomic -= toConfirm;
     }
 
+    verifyInvariant() {
+      const spent = this.getTotalSpentAtomic();
+      const remaining = this.getRemainingBudgetAtomic();
+      return this.totalBudgetAtomic === (spent + this.reservedAtomic + remaining);
+    }
+
     append(entry) {
-      const fullEntry = {
+      const id = "tx_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6);
+      const newEntry = {
         ...entry,
-        id: "tx_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6),
-        runningTotalAtomic: this.getTotalSpentAtomic().toString(),
-        remainingBudgetAtomic: this.getRemainingBudgetAtomic().toString(),
+        id,
       };
-      this.entries.push(fullEntry);
-      return fullEntry;
+      // Push first so that if state is SETTLED, getTotalSpentAtomic includes this transaction
+      this.entries.push(newEntry);
+      newEntry.runningTotalAtomic = this.getTotalSpentAtomic().toString();
+      newEntry.remainingBudgetAtomic = this.getRemainingBudgetAtomic().toString();
+      return newEntry;
     }
 
     update(id, updates) {
@@ -86,9 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
         this.entries[idx] = {
           ...this.entries[idx],
           ...updates,
-          runningTotalAtomic: this.getTotalSpentAtomic().toString(),
-          remainingBudgetAtomic: this.getRemainingBudgetAtomic().toString(),
         };
+        this.entries[idx].runningTotalAtomic = this.getTotalSpentAtomic().toString();
+        this.entries[idx].remainingBudgetAtomic = this.getRemainingBudgetAtomic().toString();
       }
     }
 
@@ -798,44 +806,100 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await paidRes.json().catch(() => ({}));
 
         if (paidRes.status === 200) {
-          ledger.confirmSettlement(priceAtomic);
-          const txHash = settlementInfo?.txHash || (data && data.settlement && data.settlement.txHash) || signature.slice(0, 66);
-          const explorerUrl = settlementInfo?.explorerUrl || `${ATLANTIC_EXPLORER_URL}/tx/${txHash}`;
+          const candidateTx = settlementInfo?.txHash || (data && data.settlement && data.settlement.txHash);
+          const isSigRef =
+            !candidateTx ||
+            candidateTx === signature.slice(0, 66) ||
+            candidateTx === `0x${signature.slice(2, 66)}`;
 
-          reservedCard.className = "decision-card approved";
-          reservedCard.querySelector(".state-badge").textContent = "SETTLED";
-          reservedCard.querySelector(".state-badge").className = "state-badge settled";
-          reservedCard.querySelector(".decision-card-reason").innerHTML =
-            `Payment settled successfully on Atlantic Testnet! Tx: <a href="${explorerUrl}" target="_blank" class="tx-hash-link">${txHash.slice(0, 10)}...${txHash.slice(-8)} ↗</a>`;
+          // Attempt read-only on-chain verification on Atlantic Testnet
+          let isReceiptConfirmed = false;
+          if (!isSigRef && candidateTx && candidateTx.length === 66 && candidateTx.startsWith("0x")) {
+            try {
+              const rpcRes = await fetch(ATLANTIC_RPC_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  jsonrpc: "2.0",
+                  id: 1,
+                  method: "eth_getTransactionReceipt",
+                  params: [candidateTx],
+                }),
+              });
+              const rpcJson = await rpcRes.json();
+              if (rpcJson.result && rpcJson.result.status === "0x1") {
+                isReceiptConfirmed = true;
+              }
+            } catch {}
+          }
 
-          ledger.append({
-            timestamp: new Date().toISOString(),
-            supplierName: supplier.supplierName,
-            endpointUrl: supplier.url,
-            priceAtomic: priceAtomic.toString(),
-            priceUsd,
-            state: "SETTLED",
-            decision: "APPROVED",
-            decisionReason: "Authorized by user wallet and settled via x402 facilitator",
-            txHash,
-            explorerUrl,
-          });
+          if (isReceiptConfirmed) {
+            // CONFIRMED ON-CHAIN SETTLEMENT
+            ledger.confirmSettlement(priceAtomic);
+            const explorerUrl = `${ATLANTIC_EXPLORER_URL}/tx/${candidateTx}`;
 
-          settledPayloads.push({
-            supplierName: supplier.supplierName,
-            url: supplier.url,
-            data,
-            priceUsd,
-            txHash,
-            explorerUrl,
-          });
+            reservedCard.className = "decision-card approved";
+            reservedCard.querySelector(".state-badge").textContent = "SETTLED";
+            reservedCard.querySelector(".state-badge").className = "state-badge settled";
+            reservedCard.querySelector(".decision-card-reason").innerHTML =
+              `Payment verified & settled on Atlantic Testnet! Tx: <a href="${explorerUrl}" target="_blank" class="tx-hash-link">${candidateTx.slice(0, 10)}...${candidateTx.slice(-8)} ↗</a>`;
+
+            ledger.append({
+              timestamp: new Date().toISOString(),
+              supplierName: supplier.supplierName,
+              endpointUrl: supplier.url,
+              priceAtomic: priceAtomic.toString(),
+              priceUsd,
+              state: "SETTLED",
+              decision: "APPROVED",
+              decisionReason: "Authorized by user wallet and confirmed on Atlantic Testnet",
+              txHash: candidateTx,
+              explorerUrl,
+            });
+
+            settledPayloads.push({
+              supplierName: supplier.supplierName,
+              url: supplier.url,
+              data,
+              priceUsd,
+              txHash: candidateTx,
+              explorerUrl,
+            });
+          } else {
+            // UNVERIFIED SETTLEMENT OR SIGNATURE REFERENCE ONLY
+            ledger.releaseReservation(priceAtomic);
+            const state = isSigRef ? "SIGNATURE_REFERENCE_ONLY" : "SETTLEMENT_UNVERIFIED";
+
+            reservedCard.className = "decision-card rejected";
+            reservedCard.querySelector(".state-badge").textContent = state;
+            reservedCard.querySelector(".state-badge").className = "state-badge rejected";
+            reservedCard.querySelector(".decision-card-reason").textContent = isSigRef
+              ? "Payment authorized by wallet, but facilitator returned signature reference only. On-chain settlement unmined ($0.000 counted in verified spend)."
+              : "Payment received by supplier, but on-chain settlement could not be independently verified on Atlantic Testnet ($0.000 counted in verified spend).";
+
+            ledger.append({
+              timestamp: new Date().toISOString(),
+              supplierName: supplier.supplierName,
+              endpointUrl: supplier.url,
+              priceAtomic: priceAtomic.toString(),
+              priceUsd,
+              state,
+              decision: "REJECTED",
+              decisionReason: isSigRef ? "Unmined signature reference" : "Unverified on-chain settlement",
+              txHash: candidateTx || "",
+              explorerUrl: candidateTx ? `${ATLANTIC_EXPLORER_URL}/tx/${candidateTx}` : "",
+            });
+          }
         } else {
+          // HTTP 402 or Error from supplier
           ledger.releaseReservation(priceAtomic);
+          const failureState = data.state || (paidRes.status === 402 ? "SETTLEMENT_FAILED" : "HTTP_ERROR");
+
           reservedCard.className = "decision-card rejected";
-          reservedCard.querySelector(".state-badge").textContent = "SETTLEMENT_FAILED";
+          reservedCard.querySelector(".state-badge").textContent = failureState;
           reservedCard.querySelector(".state-badge").className = "state-badge rejected";
           reservedCard.querySelector(".decision-card-reason").textContent =
-            `Supplier rejected payment with status ${paidRes.status}: ${data.message || "Facilitator rejection"}`;
+            data.message || `Supplier refused resource with HTTP ${paidRes.status} (${failureState}). Reservation refunded.`;
 
           ledger.append({
             timestamp: new Date().toISOString(),
@@ -843,9 +907,9 @@ document.addEventListener("DOMContentLoaded", () => {
             endpointUrl: supplier.url,
             priceAtomic: priceAtomic.toString(),
             priceUsd,
-            state: "SETTLEMENT_FAILED",
+            state: failureState,
             decision: "REJECTED",
-            decisionReason: `Settlement failed with status ${paidRes.status}`,
+            decisionReason: data.message || `HTTP ${paidRes.status}`,
           });
         }
       } catch (signErr) {
